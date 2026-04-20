@@ -802,7 +802,7 @@ class Runner(Context):
 
                 # update y_pred from new_state (needed for nudging)
                 output_list = []
-                for i in range(outputs.shape[1]):
+                for i in range(outputs.shape[2]):
                     var_name = self.checkpoint.output_tensor_index_to_variable[i]
                     field_tensor = torch.from_numpy(new_states[-1]["fields"][var_name]).to(
                         self.device, dtype=input_tensor_torch.dtype

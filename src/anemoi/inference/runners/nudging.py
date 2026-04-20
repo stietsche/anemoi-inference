@@ -15,6 +15,7 @@ import numpy as np
 import torch
 
 from . import runner_registry
+from anemoi.inference.inputs import create_input
 from anemoi.utils.config import DotDict
 from .default import DefaultRunner
 
@@ -194,10 +195,11 @@ class NudgingRunner(DefaultRunner):
             LOG.info("Nudging to input dataset is enabled.")
             lev_weights, lonlat_weights = self.get_box_weights(input_state)
             var_weights = self.get_var_weights(input_state, lev_weights)
-            input = self.create_input()
+            config = self._input_forcings("prognostic_input", "input")
+            input = create_input(self, config, variables=list(var_weights.keys()), purpose="nudging")
             for s in state_generator:
                 ref_state = input.load_forcings_state(
-                    variables=var_weights.keys(), dates=[s["date"]], current_state={}
+                    dates=[s["date"]], current_state={}
                 )
                 for var, values in ref_state["fields"].items():
                     fref = torch.from_numpy(values).to(self.device)
